@@ -75,11 +75,45 @@ function handleMessage(sender_psid, received_message) {
 
     // Check if the message contains text
     if (received_message.text) {
-
-        // Create the payload for a basic text message
-        response = {
-            "text": `You sent the message: "${received_message.text}". Now send me an image!`
-        };
+        if (received_message.text === 'Hello' || received_message.text === 'Hi' || received_message.text === 'Hey' || received_message.text === 'Yo') {
+            response = {
+                "text": `${received_message.text} Human, what's good`,
+                "quick_replies": [
+                    {
+                        "content_type": "text",
+                        "title": "Cool!",
+                        "payload": "Cool"
+                    },
+                    {
+                        "content_type": "text",
+                        "title": "Nice!",
+                        "payload": "Nice"
+                    },
+                    {
+                        "content_type": "text",
+                        "title": "Awesome!",
+                        "payload": "Awesome"
+                    },
+                    {
+                        "content_type": "text",
+                        "title": "Incredible!",
+                        "payload": "Incredible"
+                    },
+                    {
+                        "content_type": "text",
+                        "title": "Fantastic!",
+                        "payload": "Fantastic"
+                    },
+                    {
+                        "content_type": "text",
+                        "title": "Wooow!",
+                        "payload": "Wooow"
+                    }
+                ]
+            };
+        } else {
+            response = {"text": `You sent the message: "${received_message.text}". Now send me an image!`};
+        }
     } else if (received_message.attachments) {
 
         // Gets the URL of the message attachment
@@ -130,6 +164,10 @@ function handlePostback(sender_psid, received_postback) {
     }
     // Send the message to acknowledge the postback
     callSendAPI(sender_psid, response);
+}
+
+function sendQuickAction() {
+    
 }
 
 // Sends response messages via the Send API
