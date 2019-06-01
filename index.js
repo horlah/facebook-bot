@@ -11,6 +11,32 @@ const PAGE_ACCESS_TOKEN = 'EAAFLncrZCnYMBAEweIJPeYi3Yzv8bOw3uUUzKVTgNdxko1cBx05j
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337);
 
+app.get('/webhook', (req, res) => {
+
+    // Your verify token. Should be a random string.
+    let VERIFY_TOKEN = "TOKENFORTHEBAG";
+
+    // Parse the query params
+    let mode = req.query['hub.mode'];
+    let token = req.query['hub.verify_token'];
+    let challenge = req.query['hub.challenge'];
+
+    // Checks if a token and mode is in the query string of the request
+    if (mode && token) {
+
+        // Checks the mode and token sent is correct
+        if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+
+            // Responds with the challenge token from the request
+            res.status(200).send(challenge);
+
+        } else {
+            // Responds with '403 Forbidden' if verify tokens do not match
+            res.sendStatus(403);
+        }
+    }
+});
+
 app.post('/webhook', (req, res) => {
 
     let body = req.body;
@@ -41,32 +67,6 @@ app.post('/webhook', (req, res) => {
         res.sendStatus(404);
     }
 
-});
-
-app.get('/webhook', (req, res) => {
-
-    // Your verify token. Should be a random string.
-    let VERIFY_TOKEN = "TOKENFORTHEBAG";
-
-    // Parse the query params
-    let mode = req.query['hub.mode'];
-    let token = req.query['hub.verify_token'];
-    let challenge = req.query['hub.challenge'];
-
-    // Checks if a token and mode is in the query string of the request
-    if (mode && token) {
-
-        // Checks the mode and token sent is correct
-        if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-
-            // Responds with the challenge token from the request
-            res.status(200).send(challenge);
-
-        } else {
-            // Responds with '403 Forbidden' if verify tokens do not match
-            res.sendStatus(403);
-        }
-    }
 });
 
 // Handles messages events
@@ -117,7 +117,19 @@ function handleMessage(sender_psid, received_message) {
 
 // Handles messaging_postbacks events
 function handlePostback(sender_psid, received_postback) {
+    let response;
 
+    // Get the payload for the postback
+    let payload = received_postback.payload;
+
+    // Set the response based on the postback payload
+    if (payload === 'yes') {
+        response = { "text": "Thanks!" };
+    } else if (payload === 'no') {
+        response = { "text": "Oops, try sending another image." };
+    }
+    // Send the message to acknowledge the postback
+    callSendAPI(sender_psid, response);
 }
 
 // Sends response messages via the Send API
