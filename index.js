@@ -9,7 +9,7 @@ const
 
 const PAGE_ACCESS_TOKEN = 'EAAFLncrZCnYMBAEweIJPeYi3Yzv8bOw3uUUzKVTgNdxko1cBx05jRWuwwLZAvCJ2YTl0L2uWc27WT1DwRdV7TR4zGsbmyRZCEWygH32JELPYL9rZAQiLyBTZAq6civdhq1fYOgLEeFV3VZAUKAqT0051pzTWqZAfaDVlCcqJxxWfmb00O4k47zo';
 // Sets server port and logs message on success
-app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
+app.listen(process.env.PORT || 1337);
 
 app.post('/webhook', (req, res) => {
 
@@ -24,10 +24,8 @@ app.post('/webhook', (req, res) => {
             // Gets the message. entry.messaging is an array, but 
             // will only ever contain one message, so we get index 0
             let webhook_event = entry.messaging[0];
-            console.log(webhook_event);
 
             let sender_psid = webhook_event.sender.id;
-            console.log('Sender PSID: ' + sender_psid);
 
             if (webhook_event.message) {
                 handleMessage(sender_psid, webhook_event.message);
@@ -62,7 +60,6 @@ app.get('/webhook', (req, res) => {
         if (mode === 'subscribe' && token === VERIFY_TOKEN) {
 
             // Responds with the challenge token from the request
-            console.log('WEBHOOK_VERIFIED');
             res.status(200).send(challenge);
 
         } else {
