@@ -1,20 +1,18 @@
 "use strict";
 
 // Imports dependencies and set up http server
-const
-    express = require('express'),
-    bodyParser = require('body-parser'),
-    request = require('request'),
-    app = express().use(bodyParser.json()); // creates express http server
+const express = require('express');
+const bodyParser = require('body-parser');
+const request = require('request');
+const app = express().use(bodyParser.json());
 
-const PAGE_ACCESS_TOKEN = 'EAAFLncrZCnYMBAEweIJPeYi3Yzv8bOw3uUUzKVTgNdxko1cBx05jRWuwwLZAvCJ2YTl0L2uWc27WT1DwRdV7TR4zGsbmyRZCEWygH32JELPYL9rZAQiLyBTZAq6civdhq1fYOgLEeFV3VZAUKAqT0051pzTWqZAfaDVlCcqJxxWfmb00O4k47zo';
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337);
 
 app.get('/webhook', (req, res) => {
 
     // Your verify token. Should be a random string.
-    let VERIFY_TOKEN = "TOKENFORTHEBAG";
+    let VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 
     // Parse the query params
     let mode = req.query['hub.mode'];
@@ -115,7 +113,6 @@ function handleMessage(sender_psid, received_message) {
             response = {"text": `You sent the message: "${received_message.text}". Now send me an image!`};
         }
     } else if (received_message.attachments) {
-
         // Gets the URL of the message attachment
         let attachment_url = received_message.attachments[0].payload.url;
         response = {
@@ -166,10 +163,6 @@ function handlePostback(sender_psid, received_postback) {
     callSendAPI(sender_psid, response);
 }
 
-function sendQuickAction() {
-    
-}
-
 // Sends response messages via the Send API
 function callSendAPI(sender_psid, response) {
     let request_body = {
@@ -181,7 +174,7 @@ function callSendAPI(sender_psid, response) {
 
     request({
         "uri": "https://graph.facebook.com/v2.6/me/messages",
-        "qs": { "access_token": PAGE_ACCESS_TOKEN },
+        "qs": { "access_token": process.env.PAGE_ACCESS_TOKEN },
         "method": "POST",
         "json": request_body
     }, (err, res, body) => {
